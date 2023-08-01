@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}
+Home
+{% endblock %}
+{% block content %}
+<img src="{{ url_for('static', filename='homepage-image.png')}}" alt="Homepage Image" style="width:100%;height:100%;"> <!-- unable to generate image-->
+<div class="center-home">
+    <p>HI, I’M JONATHAN</p>
+    <p>I’m a Polyglot and Aspiring Fullstack Engineer based in Los Angeles.</p>
+
+    <h2>What I'm Doing Now</h2>
+    <i>Updated Jun 28, 2023</i>
+    <p>I am aiming to be a fullstack engineer and am working my way through Flask right now.</p>
+    <p>I have experience working with no-code and low-code solutions, such as Wix, Weebly, Drupal, and Wordpress.</p>
+    <p>I had four internships and part time jobs while in college as a Diplomacy and World Affairs major.</p>
+    <p>In my free time, I learn languages and hang out with my family and friends.</p>
+
+    <h2>View My Work</h2>
+    <p>Insert grid or masonry of different projects I'm deploying</p>
+
+    <h2>Contact Me</h2>
+    <p>Currently available for full time work and would love to hear from you!</p>
+    <p>official email address</p>
+</div>
+{% endblock %}
