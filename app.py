@@ -13,3 +13,7 @@ def about():
 @app.route("/contact/")
 def contact():
     return render_template("contact.html")
+
+@app.route("/youtube-api/")
+def youtube():
+    return render_template("youtube-api.html")
