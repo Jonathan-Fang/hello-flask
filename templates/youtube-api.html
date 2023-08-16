@@ -16,7 +16,7 @@ YouTube API: Third Deliverable for Eddy
 <input id="userInput" type="text" placeholder="Search for YouTube Video">
 <br>
 <button id="executeButton" type="submit">Submit</button>
-<button onclick="returnText()">Sample Submit</button>
+<!-- <button onclick="returnText()">Sample Submit</button> -->
 <br>
 <!-- embed video success -->
 <div>
@@ -25,24 +25,30 @@ YouTube API: Third Deliverable for Eddy
 <div id="output"></div>
 
 <script>
+    /*
     function returnText(){
         let input = document.getElementById("userInput").value;
         // alert(input)
         return "Hello " + input
     }
+    */
 
     document.getElementById("executeButton").addEventListener("click", function() {
         // When button is clicked, send an HTTP request to the server
         // click button --> HTTP request to server side --> execute on Py --> return
         fetch('/execute-function')
-        .then(Response => response.json())
-        .then(data => {
+        const inputText = document.getElementById('inputText').value;
+        // .then(Response => response.json())
+        /*.then(data => {
             // Display the message in the 'output' div
             document.getElementById('output').textContent = data.message;
         })
-        .catch(error => {
+        */
+        document.getElementById('output').textContent = inputText;
+        /*.catch(error => {
             console.error('Error:', error);
         });
+        */
     });
 </script>
 {% endblock %}
