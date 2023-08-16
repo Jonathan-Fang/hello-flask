@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, redirect, url_for, request # request from Flask not Python library
 from flask import render_template
 import requests
 app = Flask(__name__)
@@ -15,18 +15,25 @@ def about():
 def contact():
     return render_template("contact.html")
 
-@app.route("/youtube-api/")
-def youtube():
-    return render_template("youtube-api.html")
+@app.route("/youtube_api/", methods=['POST', 'GET']) # Flask requires method
+def youtube_api():
+    if request.method == 'POST':
+        keyword = request.form['search']
+        youtube_url = execute_function(keyword)
+        return redirect(url_for('youtube_api', value=keyword, yurl = youtube_url)) # dash, HTML can access Python functions
+    else:
+        keyword = request.args.get('search')
+        youtube_url = request.args.get('yurl')
+        return render_template("youtube_api.html", value=keyword, yurl = youtube_url) # function doesn't know each other
 
-def execute_function():
+def execute_function(keyword):
     # Insert function's logic here
     # YouTube API.py
     # test if I can do this first, and then try to make the function work
     
     # import requests
 
-    keyword = input("What video would you like to search for?\n") # keyword print success
+    # keyword = input("What video would you like to search for?\n") # keyword print success
 
     API_response = requests.get ('https://youtube.googleapis.com/youtube/v3/search?q=' + keyword + '&key=AIzaSyDkxZGugtLQ_4-Ugz2iw-JxxvBJtssrKiM')
     # response = requests.get ('https://youtube.googleapis.com/youtube/v3/search?q=barbie&key=AIzaSyDkxZGugtLQ_4-Ugz2iw-JxxvBJtssrKiM')
@@ -35,20 +42,14 @@ def execute_function():
 
     video = json["items"][0]["id"]["videoId"] # video print success
 
-    video_url = ("https://youtube.com/watch?v=" + video)
+    video_url = ("https://youtube.com/embed/" + video)
 
-    print(video_url)
+    print(video_url) # console only
     
-    return {"message": "Function executed successfully"}
-
-@app.route('/execute-function', methods=['Get'])
-def handle_execute_function():
-    # what is handle?
-    result = execute_function()
-    return jsonify(result)
+    return video_url
 
 # main driver function
 if __name__ == '__main__':
 
     # run() method of Flask class runs the application on the local development server
-    app.run()
+    app.run(debug=True)

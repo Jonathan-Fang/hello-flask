@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}
+YouTube API: Third Deliverable for Eddy
+{% endblock %}
+{% block content %}
+<head>
+    <style>
+        p {text-align: center;}
+        button {text-align: center;}
+        div {text-align: center;}
+    </style>
+</head>
+
+<title>YouTube API: Third Deliverable for Eddy, August 16, 2023</title>
+<p>YouTube API: Third Deliverable for Eddy, August 16, 2023</p>
+<form method="post" action="/youtube_api/">
+    <input id="userInput" type="text" name="search" placeholder="Search for YouTube Video">
+    <!-- name is what the backend refers to-->
+    <br>
+    <button id="executeButton" type="submit">Submit</button>
+    <br>
+</form>
+<!-- embed video success -->
+<div>
+    <iframe width="560" height="315" src="{{ yurl }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
+<div id="output"></div>
+{% endblock %}
