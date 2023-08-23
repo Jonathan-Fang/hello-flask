@@ -25,8 +25,9 @@ def youtube_api():
         return redirect(url_for('youtube_api', value=keyword, yurl = youtube_url)) # dash, HTML can access Python functions
     else:
         keyword = request.args.get('search')
-        print('else success') #debug
         youtube_url = request.args.get('yurl')
+        if youtube_url == None:
+            youtube_url = 'https://www.youtube.com/embed/bp2GF8XcJdY' # default video playing, since it'd be better to have new page if delete video
         return render_template("youtube_api.html", value=keyword, yurl = youtube_url) # function doesn't know each other
 
 def execute_function(keyword):
