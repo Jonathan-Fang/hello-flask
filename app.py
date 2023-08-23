@@ -17,6 +17,7 @@ def contact():
 
 @app.route("/youtube_api/", methods=['POST', 'GET']) # Flask requires method
 def youtube_api():
+    error = None
     if request.method == 'POST':
         keyword = request.form['search']
         youtube_url = execute_function(keyword)
