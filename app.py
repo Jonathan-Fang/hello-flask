@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, request, flash # request from Flask 
 from flask import render_template
 import requests
 app = Flask(__name__)
+app.secret_key = 'why_is_this_necessary'
 
 @app.route("/")
 def home():
@@ -49,7 +50,7 @@ def execute_function(keyword):
     print(num)
     while "youtube#video" not in json["items"][num]["id"]["kind"]:
         num = num + 1
-        if num == 5:
+        if num >= 5:
             error = 'Invalid video search'
             return error
 
@@ -63,9 +64,14 @@ def execute_function(keyword):
 
 @app.route("/weather_api/", methods=['POST', 'GET'])
 def weather_api():
+    error = None
     if request.method == 'POST':
         location_query = request.form['weather_search']
         weather_data = execute_weather_function(location_query)
+        if weather_data == None:
+            error = 'This location is invalid, would you like to try again?'
+            flash('This location is invalid, would you like to try again?')
+            return redirect(url_for('weather_results', weather_val = location_query, weather_html = ''))
         return redirect(url_for('weather_results', weather_val = location_query, weather_html = weather_data))
     else:
         location_query = request.args.get('weather_search')
@@ -90,27 +96,8 @@ def execute_weather_function(location_query):
 
     # for invalid responses
     status_code = response_API.status_code
-    while status_code != 200:
-        print("This location is invalid, would you like to try again?")
-
-        # turn the user input, feed it into geocode, return latitude and longitude
-        get_link = "https://geocode.maps.co/search?q=" + location_query
-
-        # fetch data from weather API; latitude to gridpoint
-        geocode_API = requests.get(get_link)
-
-        # spit out json
-        geocode_json_output = geocode_API.json()
-
-        # navigate
-        lat = geocode_json_output[0]["lat"]
-        lon = geocode_json_output[0]["lon"]
-
-        response_API = requests.get('https://api.weather.gov/points/' + lat + ',' + lon)
-        # response_API = requests.get('https://api.weather.gov/points/38.8894,-77.0352')
-
-        # reset the code
-        status_code = response_API.status_code
+    if status_code != 200: # if not valid
+        return None
 
     # rename and takes output
     coords_json_output = response_API.json()
