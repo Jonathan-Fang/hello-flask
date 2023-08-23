@@ -48,6 +48,10 @@ def execute_function(keyword):
     
     return video_url
 
+@app.route("/weather_api/")
+def weather_api():
+    return render_template("weather_api.html")
+
 # main driver function
 if __name__ == '__main__':
 
