@@ -19,10 +19,12 @@ def contact():
 def youtube_api():
     if request.method == 'POST':
         keyword = request.form['search']
+        print('if success') #debugging
         youtube_url = execute_function(keyword)
         return redirect(url_for('youtube_api', value=keyword, yurl = youtube_url)) # dash, HTML can access Python functions
     else:
         keyword = request.args.get('search')
+        print('else success') #debug
         youtube_url = request.args.get('yurl')
         return render_template("youtube_api.html", value=keyword, yurl = youtube_url) # function doesn't know each other
 
@@ -48,20 +50,86 @@ def execute_function(keyword):
     
     return video_url
 
-@app.route("/weather_api/")
+@app.route("/weather_api/", methods=['POST', 'GET'])
 def weather_api():
     if request.method == 'POST':
         location_query = request.form['weather_search']
         weather_data = execute_weather_function(location_query)
-        return redirect(url_for('weather_results', weather_html = weather_data))
+        return redirect(url_for('weather_results', weather_val = location_query, weather_html = weather_data))
     else:
         location_query = request.args.get('weather_search')
-        weather_data = request.args.get('')
-        return render_template("weather_api.html", weather_html = weather_data)
+        weather_data = request.args.get('weather_val')
+        return render_template("weather_api.html", weather_val = location_query, weather_html = weather_data)
 
 def execute_weather_function(location_query):
-    # insert function here
-    return render_template("weather_api.html")
+    # ask what city they want the weather for and take user input
+    # turn the user input, feed it into geocode, return latitude and longitude
+    get_link = "https://geocode.maps.co/search?q=" + location_query
+
+    geocode_API = requests.get(get_link)
+
+    # spit out json
+    geocode_json_output = geocode_API.json()
+
+    # navigate
+    lat = geocode_json_output[0]["lat"]
+    lon = geocode_json_output[0]["lon"]
+
+    response_API = requests.get('https://api.weather.gov/points/' + lat + ',' + lon)
+
+    # for invalid responses
+    status_code = response_API.status_code
+    while status_code != 200:
+        print("This location is invalid, would you like to try again?")
+
+        # turn the user input, feed it into geocode, return latitude and longitude
+        get_link = "https://geocode.maps.co/search?q=" + location_query
+
+        # fetch data from weather API; latitude to gridpoint
+        geocode_API = requests.get(get_link)
+
+        # spit out json
+        geocode_json_output = geocode_API.json()
+
+        # navigate
+        lat = geocode_json_output[0]["lat"]
+        lon = geocode_json_output[0]["lon"]
+
+        response_API = requests.get('https://api.weather.gov/points/' + lat + ',' + lon)
+        # response_API = requests.get('https://api.weather.gov/points/38.8894,-77.0352')
+
+        # reset the code
+        status_code = response_API.status_code
+
+    # rename and takes output
+    coords_json_output = response_API.json()
+
+    # print dict; key and value
+    # print(coords_json_output["properties"]["forecast"]) # success
+
+    # rename
+    gridpoint = coords_json_output["properties"]["forecast"]
+
+    # navigate to the thing; gridpoint to forecast; fetch data
+    forecast_response_API = requests.get(gridpoint)
+
+    # rename and takes output
+    forecast_response_output = forecast_response_API.json()
+
+    # rename
+    checkpoint = forecast_response_output["properties"]["periods"][0]
+
+    weather_prompt = location_query + "'s weather: "
+    weather_str = weather_prompt + checkpoint["detailedForecast"]
+    print(weather_str) #console only
+
+    # print(weather_prompt + checkpoint["detailedForecast"]) # success
+    return weather_str
+
+@app.route("/weather_results/") # required to load the page
+def weather_results():
+    result_location = request.args.get('weather_html')
+    return render_template("weather_results.html", weather_html = result_location)
 
 # main driver function
 if __name__ == '__main__':

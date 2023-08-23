@@ -14,5 +14,7 @@ Weather Results
 <body>
     <Title>Weather Results</Title>
     <p>Weather Results</p>
+    <p>{{ weather_html }}</p>
+    <a href="{{ url_for('weather_api') }}">Return to Weather API</a>
 </body>
 {% endblock %}
