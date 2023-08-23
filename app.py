@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, request # request from Flask not Python library
+from flask import Flask, redirect, url_for, request, flash # request from Flask not Python library
 from flask import render_template
 import requests
 app = Flask(__name__)
@@ -17,11 +17,11 @@ def contact():
 
 @app.route("/youtube_api/", methods=['POST', 'GET']) # Flask requires method
 def youtube_api():
-    error = None
+    error = None # notify invalid
     if request.method == 'POST':
         keyword = request.form['search']
         print('if success') #debugging
-        youtube_url = execute_function(keyword)
+        youtube_url = execute_function(keyword) # if youtube url unable to be fetched, then return flashed error message
         return redirect(url_for('youtube_api', value=keyword, yurl = youtube_url)) # dash, HTML can access Python functions
     else:
         keyword = request.args.get('search')
@@ -42,8 +42,17 @@ def execute_function(keyword):
     # response = requests.get ('https://youtube.googleapis.com/youtube/v3/search?q=barbie&key=AIzaSyDkxZGugtLQ_4-Ugz2iw-JxxvBJtssrKiM')
 
     json = API_response.json() # json print success
+    print('https://youtube.googleapis.com/youtube/v3/search?q=' + keyword + '&key=AIzaSyDkxZGugtLQ_4-Ugz2iw-JxxvBJtssrKiM') #debug
 
-    video = json["items"][0]["id"]["videoId"] # video print success
+    num=0
+    print(num)
+    while "youtube#video" not in json["items"][num]["id"]["kind"]:
+        num = num + 1
+        if num == 5:
+            error = 'Invalid video search'
+            return error
+
+    video = json["items"][num]["id"]["videoId"] # navigating
 
     video_url = ("https://youtube.com/embed/" + video)
 
