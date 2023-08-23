@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block title %}
-Home
+Weather API
 {% endblock %}
 {% block content %}
 <head>
@@ -13,5 +13,9 @@ Home
 
 <body>
     <p>Weather API: Fourth Deliverable for Eddy, August 23, 2023</p>
+    <form method="post" action="weather_api">
+        <input type="text" name="weather_search" placeholder="Search a location's weather">
+        <button type="submit">Submit</button>
+    </form>
 </body>
 {% endblock %}

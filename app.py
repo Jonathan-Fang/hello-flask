@@ -50,6 +50,17 @@ def execute_function(keyword):
 
 @app.route("/weather_api/")
 def weather_api():
+    if request.method == 'POST':
+        location_query = request.form['weather_search']
+        weather_data = execute_weather_function(location_query)
+        return redirect(url_for('weather_results', weather_html = weather_data))
+    else:
+        location_query = request.args.get('weather_search')
+        weather_data = request.args.get('')
+        return render_template("weather_api.html", weather_html = weather_data)
+
+def execute_weather_function(location_query):
+    # insert function here
     return render_template("weather_api.html")
 
 # main driver function
