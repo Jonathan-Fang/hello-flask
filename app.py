@@ -18,11 +18,17 @@ def contact():
 
 @app.route("/youtube_api/", methods=['POST', 'GET']) # Flask requires method
 def youtube_api():
-    error = None # notify invalid
     if request.method == 'POST':
         keyword = request.form['search']
         print('if success') #debugging
         youtube_url = execute_function(keyword) # if youtube url unable to be fetched, then return flashed error message
+        # for invalid responses
+        if youtube_url == 'Invalid video search':
+            return render_template("youtube_api.html", error = youtube_url)
+
+        response = requests.get(youtube_url)
+        print(response)
+        print(response.status_code)
         return redirect(url_for('youtube_api', value=keyword, yurl = youtube_url)) # dash, HTML can access Python functions
     else:
         keyword = request.args.get('search')
@@ -39,20 +45,26 @@ def execute_function(keyword):
     # import requests
 
     # keyword = input("What video would you like to search for?\n") # keyword print success
-
+    error = None
     API_response = requests.get ('https://youtube.googleapis.com/youtube/v3/search?q=' + keyword + '&key=AIzaSyDkxZGugtLQ_4-Ugz2iw-JxxvBJtssrKiM')
     # response = requests.get ('https://youtube.googleapis.com/youtube/v3/search?q=barbie&key=AIzaSyDkxZGugtLQ_4-Ugz2iw-JxxvBJtssrKiM')
 
     json = API_response.json() # json print success
     print('https://youtube.googleapis.com/youtube/v3/search?q=' + keyword + '&key=AIzaSyDkxZGugtLQ_4-Ugz2iw-JxxvBJtssrKiM') #debug
 
+    # how to break the youtube thing: kjsadnnnaisuhydq73e4h3whijsbcehwbfesdf
     num=0
-    print(num)
-    while "youtube#video" not in json["items"][num]["id"]["kind"]:
-        num = num + 1
-        if num >= 5:
-            error = 'Invalid video search'
-            return error
+    print(num, " debug") #debug
+    if bool(json["items"]): #check if items list is empty
+        while "youtube#video" not in json["items"][num]["id"]["kind"]:
+            num = num + 1
+            print(num + "debug inside") #debug
+            if num >= 4:
+                error = 'Invalid video search'
+                return error
+    else:
+        error = 'Invalid video search'
+        return error
 
     video = json["items"][num]["id"]["videoId"] # navigating
 
