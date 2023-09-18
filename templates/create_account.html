@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}
+Weather API
+{% endblock %}
+{% block content %}
+<head>
+    <style>
+        p {text-align: center;}
+        button {text-align: center;}
+        div {text-align: center;}
+    </style>
+</head>
+
+<body>
+    <p>Create Account: Deliverable for Eddy, September 19, 2023</p>
+    <form method="post" action="/create_account/">
+        <p>Fill in the information below to create an account</p><br>
+        <input type="text" name="weather_search" placeholder="Input location here"><br><br>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+{% endblock %}
