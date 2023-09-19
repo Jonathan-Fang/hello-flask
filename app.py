@@ -1,7 +1,8 @@
 from flask import Flask, redirect, url_for, request, flash # request from Flask not Python library
 from flask import render_template
 import requests
-# import pymysql
+import pymysql # Python to connect to MySQL
+
 app = Flask(__name__)
 app.secret_key = 'why_is_this_necessary'
 
@@ -146,6 +147,37 @@ def weather_results():
 @app.route("/create_account/")
 def create_account():
     return render_template("create_account.html")
+
+def connectmysql():
+    # connect to the database
+    connection = pymysql.connect(
+        host='localhost',
+        user='root',
+        password='Tgbmysqlr!', # hardcoding password, development vs. production, could query password
+        db='flask_database',
+    )
+
+    #i need python to somehow take user input and feed it to the server
+    # first print input fields successfully in the console
+    # turn input fields into var
+    # input fields into the pymysql
+    # take those values and spit it back into view_account
+
+    sql_queries = ['SELECT * FROM flask_table', 
+                   """INSERT INTO flask_table(fname, lname, username, password, favnum, favelement, email, currentmood)
+                   VALUES(fname, lname, username, password, favnum, favelement, email, currentmood)"""]
+    sql_descriptions = ['selected from flask_table', 'added one account']
+    with connection: #with is a python thing
+        with connection.cursor() as cursor:
+            for i in range(len(sql_queries)):
+                # read all records from both tables # some kind of loop
+                sql = sql_queries[i]
+                # sql = 'SELECT * FROM flask_table' #input into list; 
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                desc = sql_descriptions[i] #second list corresponding to queries
+                print(result)
+                print(desc)
 
 @app.route("/view_account/")
 def view_account():
