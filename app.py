@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, request, flash # request from Flask not Python library
 from flask import render_template
 import requests
+# import pymysql
 app = Flask(__name__)
 app.secret_key = 'why_is_this_necessary'
 
@@ -141,6 +142,14 @@ def execute_weather_function(location_query):
 def weather_results():
     result_location = request.args.get('weather_html')
     return render_template("weather_results.html", weather_html = result_location)
+
+@app.route("/create_account/")
+def create_account():
+    return render_template("create_account.html")
+
+@app.route("/view_account/")
+def view_account():
+    return render_template("view_account.html")
 
 # main driver function
 if __name__ == '__main__':
