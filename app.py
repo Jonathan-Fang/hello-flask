@@ -144,15 +144,20 @@ def weather_results():
     result_location = request.args.get('weather_html')
     return render_template("weather_results.html", weather_html = result_location)
 
-@app.route("/create_account/", methods=['POST,' 'GET'])
+@app.route("/create_account/", methods=['POST', 'GET'])
 def create_account():
     if request.method == 'POST':
-        return render_template("create_account.html")
+        test_query = request.form
+        print(test_query) # debug successful 23:30
+        connectmysql_output = connectmysql(test_query)
+        print(connectmysql_output) #debug
+        return redirect(url_for("view_account.html", results = connectmysql_output))
     else:
-        return render_template("create_account.html")
+        return render_template("create_account.html", results = '')
 
-def connectmysql(fname, lname, usrname, psword, favnum, favelement, email, currentmood):
+def connectmysql(test_query): # fname, lname, usrname, psword, favnum, favelement, email, currentmood
     # connect to the database
+    # MAKE SURE YOUR DATABASE IS RUNNING AND DATABASE AND TABLE IS CREATED
     connection = pymysql.connect(
         host='localhost',
         user='root',
@@ -166,23 +171,33 @@ def connectmysql(fname, lname, usrname, psword, favnum, favelement, email, curre
     # input fields into the pymysql
     # take those values and spit it back into view_account
 
+    # do i need to loop through the list and get the values and spit it into the string?
+
     insert_sql_query = """INSERT INTO flask_table(fname, lname, username, password, favnum, favelement, email, currentmood)
-                        VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"""
-    record = (fname, lname, usrname, psword, favnum, favelement, email, currentmood)
+                        VALUES(fnameblah, lnameblah, usernameblah, passwordblah, 3, favelementblah, emailblah, currentmoodblah)"""
+    record = ()
+    # record = ('fnameblah', 'lnameblah', 'usernameblah', 'passwordblah', 3, 'favelementblah', 'emailblah', 'currentmoodblah')
+    # record = (fname, lname, usrname, psword, favnum, favelement, email, currentmood)
     with connection: #with is a python thing
         with connection.cursor() as cursor:
-            # sql = 'SELECT * FROM flask_table' #input into list; 
             cursor.execute(insert_sql_query, record)
             connection.commit()
             # print debug
             result = cursor.fetchall()
             print(result)
             print('Added one account')
+
+            cursor.execute('SELECT * FROM flask_table')
+            result = cursor.fetchall()
+            print(result)
     # error handling
 
 @app.route("/view_account/")
 def view_account():
-    return render_template("view_account.html")
+    # view_results = request.args.get('results')
+    view_results = 'string'
+    print(view_results) # debug
+    return render_template("view_account.html", results = view_results)
     # need to render the information into here, start with string, can get table later
 
 # main driver function
