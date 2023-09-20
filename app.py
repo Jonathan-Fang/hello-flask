@@ -149,8 +149,10 @@ def create_account():
     if request.method == 'POST':
         test_query = request.form
         print(test_query) # debug successful 23:30
+        print('printing test_query')
         connectmysql_output = connectmysql(test_query)
         print(connectmysql_output) #debug
+        print('printing connectmysql_output')
         return redirect(url_for("view_account", results = connectmysql_output))
     else:
         return render_template("create_account.html", results = '')
@@ -172,9 +174,30 @@ def connectmysql(test_query): # fname, lname, usrname, psword, favnum, favelemen
     # take those values and spit it back into view_account
 
     # do i need to loop through the list and get the values and spit it into the string?
+    # convert test_query to list to index?
+    test_query_list = list(test_query.values())
+    print(test_query_list)
+    print('printing list')
+    fname = test_query_list[0]
+    print(fname)
+    print('printing fname')
+    lname = test_query_list[1]
+    username = test_query_list[2]
+    password = test_query_list[3]
+    favnum = test_query_list[4]
+    favelement = test_query_list[5]
+    email = test_query_list[6]
+    currentmood = test_query_list[7]
+
+    # yaish = f"{fname} lol {lname} lol {username} lol {password} lol {favnum} lol {favelement} lol {email} lol {currentmood}" # how to use f strings with Jinja
+    # yaish = "{} l {} l {} l {} l {} l {} l {} l {}".format(fname, lname, username, password, favnum, favelement, email, currentmood)
+    # yaish = "%s fname %s lname %s username %s password %s favnum %s favelement %s email %s currentmood" % (fname, lname, username, password, favnum, favelement, email, currentmood)
+    # print(yaish)
 
     insert_sql_query = """INSERT INTO flask_table(fname, lname, username, password, favnum, favelement, email, currentmood)
-                        VALUES(\'fnameblah\', \'lnameblah\', \'usernameblah\', \'passwordblah\', 3, \'favelementblah\', \'emailblah\', \'currentmoodblah\')"""
+                        VALUES('fnameblah', 'lnameblah', 'usernameblah', 'passwordblah', 3, 'favelementblah', 'emailblah', 'currentmoodblah')"""
+    # {fname}, {lname}, {username}, {password}, {favnum}, {favelement}, {email}, {currentmood}
+    # \'fnameblah\', \'lnameblah\', \'usernameblah\', \'passwordblah\', 3, \'favelementblah\', \'emailblah\', \'currentmoodblah\'
     # record = ('fnameblah', 'lnameblah', 'usernameblah', 'passwordblah', 3, 'favelementblah', 'emailblah', 'currentmoodblah')
     # record = (fname, lname, usrname, psword, favnum, favelement, email, currentmood)
     with connection: #with is a python thing
@@ -187,17 +210,20 @@ def connectmysql(test_query): # fname, lname, usrname, psword, favnum, favelemen
             print('Added one account')
 
             cursor.execute('SELECT * FROM flask_table')
+            connection.commit()
             result = cursor.fetchall()
             print(result)
+            print('Showing current database status in console')
 
-            return test_query
+            return result #test_query, technically this is from user input, not the database
     # error handling
 
 @app.route("/view_account/")
 def view_account():
     # view_results = request.args.get('results')
-    view_results = 'string'
+    view_results = request.args.get('results')
     print(view_results) # debug
+    print('showing results in console')
     return render_template("view_account.html", results = view_results)
     # need to render the information into here, start with string, can get table later
 
