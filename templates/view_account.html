@@ -12,8 +12,8 @@ Weather API
 </head>
 
 <body>
-    <Title>View Account</Title>
-    <p>View Account</p>
+    <Title>View Account Results</Title>
+    <p>View Account Results</p>
     <!--error-->
     {% if error %}
     <p class=error><strong>Error:</strong> {{ error }}</p>
@@ -28,7 +28,14 @@ Weather API
             </ul>
         {% endif %}
     {% endwith %}
-    <p>{{ weather_html }}</p>
+    <table> 
+        {% for key, value in results.items() %} <!-- i don't really understand this -->
+            <tr>
+                <th> {{key}} </th>
+                <td> {{value}} </td>
+            </tr>
+        {% endfor %}
+    </table>
     <a href="{{ url_for('create_account') }}">Return to Create Account</a>
 </body>
 {% endblock %}
