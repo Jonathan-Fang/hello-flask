@@ -151,7 +151,7 @@ def create_account():
         print(test_query) # debug successful 23:30
         connectmysql_output = connectmysql(test_query)
         print(connectmysql_output) #debug
-        return redirect(url_for("view_account.html", results = connectmysql_output))
+        return redirect(url_for("view_account", results = connectmysql_output))
     else:
         return render_template("create_account.html", results = '')
 
@@ -174,13 +174,12 @@ def connectmysql(test_query): # fname, lname, usrname, psword, favnum, favelemen
     # do i need to loop through the list and get the values and spit it into the string?
 
     insert_sql_query = """INSERT INTO flask_table(fname, lname, username, password, favnum, favelement, email, currentmood)
-                        VALUES(fnameblah, lnameblah, usernameblah, passwordblah, 3, favelementblah, emailblah, currentmoodblah)"""
-    record = ()
+                        VALUES(\'fnameblah\', \'lnameblah\', \'usernameblah\', \'passwordblah\', 3, \'favelementblah\', \'emailblah\', \'currentmoodblah\')"""
     # record = ('fnameblah', 'lnameblah', 'usernameblah', 'passwordblah', 3, 'favelementblah', 'emailblah', 'currentmoodblah')
     # record = (fname, lname, usrname, psword, favnum, favelement, email, currentmood)
     with connection: #with is a python thing
         with connection.cursor() as cursor:
-            cursor.execute(insert_sql_query, record)
+            cursor.execute(insert_sql_query) # , record
             connection.commit()
             # print debug
             result = cursor.fetchall()
@@ -190,6 +189,8 @@ def connectmysql(test_query): # fname, lname, usrname, psword, favnum, favelemen
             cursor.execute('SELECT * FROM flask_table')
             result = cursor.fetchall()
             print(result)
+
+            return test_query
     # error handling
 
 @app.route("/view_account/")
